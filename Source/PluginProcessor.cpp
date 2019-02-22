@@ -21,9 +21,18 @@ DistortionAudioProcessor::DistortionAudioProcessor()
                       #endif
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+		mParameters(*this, nullptr)
 #endif
 {
+	NormalisableRange<float> gainRange(0.f, 25.f);
+	NormalisableRange<float> wetDryRange(0.f, 1.f);
+	mParameters.createAndAddParameter("gain", "Gain", String(), gainRange, .5f, nullptr, nullptr);
+	mParameters.createAndAddParameter("wetDry", "WetDry", String(), wetDryRange, .5f, nullptr, nullptr);
+	mParameters.state = ValueTree("SimpleDistortion");
+
+	gainParameter = mParameters.getRawParameterValue("gain");
+	wetDryParameter = mParameters.getRawParameterValue("wetDry");
 }
 
 DistortionAudioProcessor::~DistortionAudioProcessor()
@@ -181,6 +190,11 @@ void DistortionAudioProcessor::setStateInformation (const void* data, int sizeIn
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+}
+
+AudioProcessorValueTreeState& DistortionAudioProcessor::getState()
+{
+	return mParameters;
 }
 
 //==============================================================================
