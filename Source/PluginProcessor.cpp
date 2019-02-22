@@ -21,9 +21,18 @@ DistortionAudioProcessor::DistortionAudioProcessor()
                       #endif
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+		mParameters(*this, nullptr)
 #endif
 {
+	NormalisableRange<float> gainRange(0.f, 25.f);
+	NormalisableRange<float> wetDryRange(0.f, 1.f);
+	mParameters.createAndAddParameter("gain", "Gain", String(), gainRange, .5f, nullptr, nullptr);
+	mParameters.createAndAddParameter("wetDry", "WetDry", String(), wetDryRange, .5f, nullptr, nullptr);
+	mParameters.state = ValueTree("SimpleDistortion");
+
+	mGainPointer = mParameters.getRawParameterValue("gain");
+	mWetDryPointer = mParameters.getRawParameterValue("wetDry");
 }
 
 DistortionAudioProcessor::~DistortionAudioProcessor()
@@ -135,27 +144,36 @@ void DistortionAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuf
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
+	auto wetDry = *mWetDryPointer;
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);
 
-        // ..do something to the data...
+		for (auto sample = 0; sample < buffer.getNumSamples(); ++sample)
+		{
+			float dryOutput = buffer.getSample(channel, sample);
+			float wetOutput = expDistortion(dryOutput);
+			channelData[sample] = dryOutput * (1 - wetDry) + wetOutput * wetDry;
+		}
     }
+}
+
+//==============================================================================
+float DistortionAudioProcessor::expDistortion(float sample)
+{
+	auto gain = *mGainPointer;
+
+	float wetOutput;
+	if (sample > 0)
+	{
+		wetOutput = 1 - exp(-1 * (sample * gain));
+	}
+	else
+	{
+		wetOutput = -1 + exp(1 * (sample * gain));
+	}
+	return wetOutput;
 }
 
 //==============================================================================
@@ -182,6 +200,12 @@ void DistortionAudioProcessor::setStateInformation (const void* data, int sizeIn
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
 }
+
+AudioProcessorValueTreeState& DistortionAudioProcessor::getState()
+{
+	return mParameters;
+}
+
 
 //==============================================================================
 // This creates new instances of the plugin..
