@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "Distortion.h"
 
 //==============================================================================
 /**
@@ -57,12 +58,11 @@ public:
 
     //==============================================================================
 	AudioProcessorValueTreeState& getState();
-	float expDistortion(float sample);
 
 private:
 	AudioProcessorValueTreeState mParameters;
+	Distortion mDistortion;
 
-	float* mGainPointer = nullptr;
 	float* mWetDryPointer = nullptr;
 
     //==============================================================================

@@ -22,7 +22,8 @@ DistortionAudioProcessor::DistortionAudioProcessor()
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
                        ),
-		mParameters(*this, nullptr)
+		mParameters(*this, nullptr),
+		mDistortion(mParameters)
 #endif
 {
 	NormalisableRange<float> gainRange(0.f, 25.f);
@@ -31,7 +32,6 @@ DistortionAudioProcessor::DistortionAudioProcessor()
 	mParameters.createAndAddParameter("wetDry", "WetDry", String(), wetDryRange, .5f, nullptr, nullptr);
 	mParameters.state = ValueTree("SimpleDistortion");
 
-	mGainPointer = mParameters.getRawParameterValue("gain");
 	mWetDryPointer = mParameters.getRawParameterValue("wetDry");
 }
 
@@ -153,27 +153,10 @@ void DistortionAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuf
 		for (auto sample = 0; sample < buffer.getNumSamples(); ++sample)
 		{
 			float dryOutput = buffer.getSample(channel, sample);
-			float wetOutput = expDistortion(dryOutput);
+			float wetOutput = mDistortion.applyDistortion(dryOutput);
 			channelData[sample] = dryOutput * (1 - wetDry) + wetOutput * wetDry;
 		}
     }
-}
-
-//==============================================================================
-float DistortionAudioProcessor::expDistortion(float sample)
-{
-	auto gain = *mGainPointer;
-
-	float wetOutput;
-	if (sample > 0)
-	{
-		wetOutput = 1 - exp(-1 * (sample * gain));
-	}
-	else
-	{
-		wetOutput = -1 + exp(1 * (sample * gain));
-	}
-	return wetOutput;
 }
 
 //==============================================================================
