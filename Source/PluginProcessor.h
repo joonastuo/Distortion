@@ -54,12 +54,16 @@ public:
     //==============================================================================
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
+
+    //==============================================================================
 	AudioProcessorValueTreeState& getState();
+	float expDistortion(float sample);
+
 private:
 	AudioProcessorValueTreeState mParameters;
 
-	float* gainParameter = nullptr;
-	float* wetDryParameter = nullptr;
+	float* mGainPointer = nullptr;
+	float* mWetDryPointer = nullptr;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistortionAudioProcessor)
