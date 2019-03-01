@@ -12,6 +12,7 @@
       <FILE id="hHYVbq" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
       <FILE id="bDJaUk" name="Distortion.cpp" compile="1" resource="0" file="Source/Distortion.cpp"/>
       <FILE id="uRba4d" name="Distortion.h" compile="0" resource="0" file="Source/Distortion.h"/>
+      <FILE id="st75R5" name="MyKnobs.h" compile="0" resource="0" file="Source/MyKnobs.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

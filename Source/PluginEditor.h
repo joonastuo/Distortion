@@ -12,6 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
+#include "MyKnobs.h"
 
 //==============================================================================
 /**
@@ -44,7 +45,8 @@ private:
     Label mVolumeLabel;
     Slider mVolumeSlider;
     
-
+    KnobLookAndFeel knobLookAndFeel;
+    
 	int sliderSize = 100;
 
 	std::unique_ptr<SliderAttachment> mGainAttachment;

@@ -15,7 +15,7 @@
 DistortionAudioProcessorEditor::DistortionAudioProcessorEditor (DistortionAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p), mParameter(p.getState())
 {
-    setSize (300, 150);
+    setSize (300, 180);
     
     
 	mGainLabel.setText("GAIN", dontSendNotification);
@@ -44,10 +44,16 @@ DistortionAudioProcessorEditor::DistortionAudioProcessorEditor (DistortionAudioP
     mVolumeSlider.setTextBoxStyle(Slider::NoTextBox, true, 100, 20);
     mVolumeAttachment.reset(new SliderAttachment(mParameter, "volume", mVolumeSlider));
     addAndMakeVisible(mVolumeSlider);
+    mGainSlider.setLookAndFeel(&knobLookAndFeel);
+    mWetDrySlider.setLookAndFeel(&knobLookAndFeel);
+    mVolumeSlider.setLookAndFeel(&knobLookAndFeel);
 }
 
 DistortionAudioProcessorEditor::~DistortionAudioProcessorEditor()
 {
+    mGainSlider.setLookAndFeel(nullptr);
+    mWetDrySlider.setLookAndFeel(nullptr);
+    mVolumeSlider.setLookAndFeel(nullptr);
 }
 
 //==============================================================================
