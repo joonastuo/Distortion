@@ -15,7 +15,7 @@
 DistortionAudioProcessorEditor::DistortionAudioProcessorEditor (DistortionAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p), mParameter(p.getState())
 {
-    setSize (300, 180);
+    setSize (350, 180);
     
     
 	mGainLabel.setText("GAIN", dontSendNotification);
@@ -102,7 +102,7 @@ void DistortionAudioProcessorEditor::resized()
                                FlexItem(wetDryBox).withFlex(1)
                             });
 
-	masterBox.performLayout(getLocalBounds().toFloat());
+	masterBox.performLayout(getLocalBounds().reduced(20, 20).toFloat());
 }
 
 FlexItem DistortionAudioProcessorEditor::makeRotarySlider(Component & c)
