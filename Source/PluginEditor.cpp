@@ -15,25 +15,35 @@
 DistortionAudioProcessorEditor::DistortionAudioProcessorEditor (DistortionAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p), mParameter(p.getState())
 {
-	mGainLabel.setText("Gain", dontSendNotification);
+    setSize (300, 150);
+    
+    
+	mGainLabel.setText("GAIN", dontSendNotification);
 	mGainLabel.setJustificationType(Justification::centred);
 	addAndMakeVisible(mGainLabel);
 
 	mGainSlider.setSliderStyle(Slider::SliderStyle::Rotary);
-	mGainSlider.setTextBoxStyle(Slider::TextBoxBelow, true, 100, 20);
+	mGainSlider.setTextBoxStyle(Slider::NoTextBox, true, 100, 20);
 	mGainAttachment.reset(new SliderAttachment(mParameter, "gain", mGainSlider));
 	addAndMakeVisible(mGainSlider);
 
-	mWetDryLabel.setText("Dry / Wet", dontSendNotification);
+	mWetDryLabel.setText("DRY / WET", dontSendNotification);
 	mWetDryLabel.setJustificationType(Justification::centred);
 	addAndMakeVisible(mWetDryLabel);
 
 	mWetDrySlider.setSliderStyle(Slider::SliderStyle::Rotary);
-	mWetDrySlider.setTextBoxStyle(Slider::TextBoxBelow, true, 100, 20);
+	mWetDrySlider.setTextBoxStyle(Slider::NoTextBox, true, 100, 20);
 	mWetDryAttachment.reset(new SliderAttachment(mParameter, "wetDry", mWetDrySlider));
 	addAndMakeVisible(mWetDrySlider);
 
-    setSize (400, 200);
+    mVolumeLabel.setText("VOLUME", dontSendNotification);
+    mVolumeLabel.setJustificationType(Justification::centred);
+    addAndMakeVisible(mVolumeLabel);
+    
+    mVolumeSlider.setSliderStyle(Slider::SliderStyle::Rotary);
+    mVolumeSlider.setTextBoxStyle(Slider::NoTextBox, true, 100, 20);
+    mVolumeAttachment.reset(new SliderAttachment(mParameter, "volume", mVolumeSlider));
+    addAndMakeVisible(mVolumeSlider);
 }
 
 DistortionAudioProcessorEditor::~DistortionAudioProcessorEditor()
@@ -54,22 +64,37 @@ void DistortionAudioProcessorEditor::resized()
 	gainBox.justifyContent = FlexBox::JustifyContent::center;
 	gainBox.flexDirection = FlexBox::Direction::column;
 	gainBox.items.addArray({ makeLabel(mGainLabel),
-							 makeRotarySlider(mGainSlider) });
+							 makeRotarySlider(mGainSlider)
+                          });
 
+    FlexBox volumeBox;
+    volumeBox.alignContent = FlexBox::AlignContent::center;
+    volumeBox.justifyContent = FlexBox::JustifyContent::center;
+    volumeBox.flexDirection = FlexBox::Direction::column;
+    volumeBox.items.addArray({makeLabel(mVolumeLabel),
+                              makeRotarySlider(mVolumeSlider)
+        
+        
+    });
+
+    
 	FlexBox wetDryBox;
 	wetDryBox.alignContent = FlexBox::AlignContent::center;
 	wetDryBox.justifyContent = FlexBox::JustifyContent::center;
 	wetDryBox.flexDirection = FlexBox::Direction::column;
 	wetDryBox.items.addArray({ makeLabel(mWetDryLabel),
-							   makeRotarySlider(mWetDrySlider) });
-
+							   makeRotarySlider(mWetDrySlider)
+                            });
+    
 
 	FlexBox masterBox;
 	masterBox.alignContent = FlexBox::AlignContent::center;
 	masterBox.justifyContent = FlexBox::JustifyContent::spaceAround;
 	masterBox.flexDirection = FlexBox::Direction::row;
 	masterBox.items.addArray({ FlexItem(gainBox).withFlex(1),
-							   FlexItem(wetDryBox).withFlex(1) });
+                               FlexItem(volumeBox).withFlex(1),
+                               FlexItem(wetDryBox).withFlex(1)
+                            });
 
 	masterBox.performLayout(getLocalBounds().toFloat());
 }

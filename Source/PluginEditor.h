@@ -41,11 +41,15 @@ private:
 	Label mGainLabel;
 	Slider mWetDrySlider;
 	Label mWetDryLabel;
+    Label mVolumeLabel;
+    Slider mVolumeSlider;
+    
 
 	int sliderSize = 100;
 
 	std::unique_ptr<SliderAttachment> mGainAttachment;
 	std::unique_ptr<SliderAttachment> mWetDryAttachment;
+    std::unique_ptr<SliderAttachment> mVolumeAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistortionAudioProcessorEditor)
 };
