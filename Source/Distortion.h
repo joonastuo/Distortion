@@ -20,7 +20,7 @@ class Distortion
 public:
     Distortion(AudioProcessorValueTreeState& vt);
     ~Distortion();
-	float applyDistortion(float sample);
+	float process(float sample);
 	float expDistortion(float sample);
 
 private:

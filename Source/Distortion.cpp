@@ -20,7 +20,7 @@ Distortion::~Distortion()
 {
 }
 
-float Distortion::applyDistortion(float sample)
+float Distortion::process(float sample)
 {
 	return expDistortion(sample);
 }

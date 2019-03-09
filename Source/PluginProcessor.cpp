@@ -156,7 +156,7 @@ void DistortionAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuf
 		for (auto sample = 0; sample < buffer.getNumSamples(); ++sample)
 		{
 			float dryOutput = buffer.getSample(channel, sample);
-			float wetOutput = mDistortion.applyDistortion(dryOutput);
+			float wetOutput = mDistortion.process(dryOutput);
 			channelData[sample] = (dryOutput * (1 - wetDry) + wetOutput * wetDry) * volume;
 		}
     }
