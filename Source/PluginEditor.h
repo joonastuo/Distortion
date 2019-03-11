@@ -28,6 +28,7 @@ public:
     void resized() override;
 	FlexItem makeRotarySlider(Component& c);
 	FlexItem makeLabel(Component& c);
+	void initialiseGUI();
 
 private:
     // This reference is provided as a quick way for your editor to
@@ -38,20 +39,30 @@ private:
 
 	typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
 
+	// Sliders
 	Slider mGainSlider;
-	Label mGainLabel;
 	Slider mWetDrySlider;
+    Slider mVolumeSlider;
+	Slider mLowPassSlider;
+	Slider mHighPassSlider;
+
+	// Labels
+	Label mGainLabel;
 	Label mWetDryLabel;
     Label mVolumeLabel;
-    Slider mVolumeSlider;
-    
+	Label mLowPassLabel;
+	Label mHighPassLabel;
+
+   // LAF 
     KnobLookAndFeel knobLookAndFeel;
     
-	int sliderSize = 100;
+	int sliderSize = 60;
 
 	std::unique_ptr<SliderAttachment> mGainAttachment;
 	std::unique_ptr<SliderAttachment> mWetDryAttachment;
     std::unique_ptr<SliderAttachment> mVolumeAttachment;
+	std::unique_ptr<SliderAttachment> mLowPassAttachment;
+	std::unique_ptr<SliderAttachment> mHighPassAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistortionAudioProcessorEditor)
 };
