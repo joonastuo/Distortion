@@ -30,34 +30,35 @@ public:
 		auto ry = centreY - radius;
 		auto rw = radius * 2.0f;
 		auto angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
-		// fill
-		g.setColour(Colours::black);
-		g.fillEllipse(rx, ry, rw, rw);
-		paintMarkers(g, centreX, centreY, radius+1.f);
-		// outline
+		// Draw path of the slider backgound (in darker background colour)
+		Path backgroundArc;
+		backgroundArc.addCentredArc(centreX, centreY, radius, radius, 0.0f, rotaryStartAngle, rotaryEndAngle, true);
+		Colour myColour = findColour(0x1005700);
+		myColour = myColour.darker(.8f);
+		g.setColour(myColour);
+		g.strokePath(backgroundArc, PathStrokeType(3.f, PathStrokeType::curved, PathStrokeType::rounded));
+		// Draw path of slider foreground (in white)
+		Path foregroundArc;
+		foregroundArc.addCentredArc(centreX, centreY, radius, radius, 0.0f, rotaryStartAngle, angle, true);
+		g.setColour(Colours::white);
+		g.strokePath(foregroundArc, PathStrokeType(3.f, PathStrokeType::curved, PathStrokeType::rounded));
+
+		// Pointer
 		Path p;
-		auto pointerLength = radius * 0.33f;
-		auto pointerThickness = 2.0f;
+		auto pointerLength = radius * 1.f;
+		auto pointerThickness = 3.0f;
 		p.addRectangle(-pointerThickness * 0.5f, -radius, pointerThickness, pointerLength);
 		p.applyTransform(AffineTransform::rotation(angle).translated(centreX, centreY));
-		// pointer
 		g.setColour(Colours::white);
 		g.fillPath(p);
-	}
-	void paintMarkers(Graphics & g, float xOrig, float yOrig, float r)
-	{
-		g.setColour(Colours::white);
-		for (auto i = -60; i <= 240; ++i)
-		{
-			float rad = i * (M_PI / 180.f);
-			float startX = xOrig + r * cos(rad);
-			float startY = yOrig + r * -sin(rad);
-			float endX = xOrig + (r + 3.f) * cos(rad);
-			float endY = yOrig + (r + 3.f) * -sin(rad);
 
-			// Draw ticks
-			if (abs(i) % 36 == 18)
-				g.drawLine(startX, startY, endX, endY, 2.f);
-		}
+		// Draw slider value
+		g.setFont(12);
+		String value = "";
+		if (slider.getValue() > 1000)
+			value = static_cast<String> (round(slider.getValue() / 10.f) / 100.f) + "k";
+		else
+			value = static_cast<String> (round(slider.getValue() * 100.f) / 100.f);
+		g.drawFittedText(value + (slider.getValue() > 10 ? " Hz" : ""), centreX - 30.f, height - 10.f, 60.f, 10.f, Justification::centred, 1);
 	}
 };

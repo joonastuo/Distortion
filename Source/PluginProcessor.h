@@ -32,6 +32,7 @@ public:
    #endif
 
     void processBlock (AudioBuffer<float>&, MidiBuffer&) override;
+	void updateParameters();
 
     //==============================================================================
     AudioProcessorEditor* createEditor() override;

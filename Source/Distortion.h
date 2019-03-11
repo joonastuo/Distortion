@@ -32,9 +32,10 @@ private:
 	// Private variables
 	AudioProcessorValueTreeState& mParameters;
 	static constexpr size_t numWaveShapers = 1;
-	dsp::WaveShaper<float> waveShapers[numWaveShapers];
+	dsp::WaveShaper<float> mWaveShapers[numWaveShapers];
+	dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>> mLowPassFilter, mHighPassFilter;
 	std::unique_ptr<dsp::Oversampling<float>> mOversampling;
-	dsp::Gain<float> inputVolume, outputVolume;
+	dsp::Gain<float> mInputVolume, mOutputVolume;
 
 	float mSampleRate = 44100.f;
 	uint32 mMaxBlockSize = 512;

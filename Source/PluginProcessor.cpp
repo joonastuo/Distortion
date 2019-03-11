@@ -29,9 +29,15 @@ DistortionAudioProcessor::DistortionAudioProcessor()
 	NormalisableRange<float> gainRange(0.f, 25.f);
 	NormalisableRange<float> wetDryRange(0.f, 1.f);
     NormalisableRange<float> volumeRange(.1f, 2.f);
+	NormalisableRange<float> highPassRange(20.f, 20000.f, 0.f, 0.5f);
+	NormalisableRange<float> lowPassRange(20.f, 20000.f, 0.f, 0.5f);
+
 	mParameters.createAndAddParameter("gain", "Gain", String(), gainRange, .5f, nullptr, nullptr);
 	mParameters.createAndAddParameter("wetDry", "WetDry", String(), wetDryRange, .5f, nullptr, nullptr);
     mParameters.createAndAddParameter("volume", "Volume", String(), volumeRange, 1.f, nullptr, nullptr);
+	mParameters.createAndAddParameter("HPFreq", "Pre Highpass Freq", String(), highPassRange, 20.f, nullptr, nullptr);
+	mParameters.createAndAddParameter("LPFreq", "Post Lowpass Freq", String(), lowPassRange, 20000.f, nullptr, nullptr);
+	
 	mParameters.state = ValueTree("SimpleDistortion");
 
 	mWetDryPointer = mParameters.getRawParameterValue("wetDry");
@@ -161,6 +167,11 @@ void DistortionAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuf
 		block = block.getSubsetChannelBlock(0, 2);
 
 	mDistortion.process(dsp::ProcessContextReplacing<float>(block));
+
+}
+
+void DistortionAudioProcessor::updateParameters()
+{
 
 }
 
