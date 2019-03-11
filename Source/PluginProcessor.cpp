@@ -26,13 +26,19 @@ DistortionAudioProcessor::DistortionAudioProcessor()
 		mDistortion(mParameters)
 #endif
 {
-	NormalisableRange<float> gainRange(0.f, 25.f);
+	NormalisableRange<float> inputVolumeRange(0.0f, 60.0f, 0.0f, 1.0f);
+	NormalisableRange<float> highPassRange(20.f, 20000.f, 0.f, 0.5f);
+	NormalisableRange<float> lowPassRange(20.f, 20000.f, 0.f, 0.5f);
+    NormalisableRange<float> outputVolumeRange(-40.0f, 40.0f, 0.0f, 1.0f );
 	NormalisableRange<float> wetDryRange(0.f, 1.f);
-    NormalisableRange<float> volumeRange(.1f, 2.f);
-	mParameters.createAndAddParameter("gain", "Gain", String(), gainRange, .5f, nullptr, nullptr);
+
+	mParameters.createAndAddParameter("inputVolume", "DIST", "dB", inputVolumeRange, 0.0f, nullptr, nullptr);
+	mParameters.createAndAddParameter("HPFreq", "Pre Highpass Freq", "Hz", highPassRange, 20.f, nullptr, nullptr);
+	mParameters.createAndAddParameter("LPFreq", "Post Lowpass Freq", "Hz", lowPassRange, 20000.f, nullptr, nullptr);
+    mParameters.createAndAddParameter("outputVolume", "LEVEL", "dB", outputVolumeRange, 0.0f, nullptr, nullptr);
 	mParameters.createAndAddParameter("wetDry", "WetDry", String(), wetDryRange, .5f, nullptr, nullptr);
-    mParameters.createAndAddParameter("volume", "Volume", String(), volumeRange, 1.f, nullptr, nullptr);
-	mParameters.state = ValueTree("SimpleDistortion");
+	
+	mParameters.state = ValueTree("Distortion");
 
 	mWetDryPointer = mParameters.getRawParameterValue("wetDry");
 }
@@ -178,15 +184,18 @@ AudioProcessorEditor* DistortionAudioProcessor::createEditor()
 //==============================================================================
 void DistortionAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+	auto state = mParameters.copyState();
+	std::unique_ptr<XmlElement> xml(state.createXml());
+	copyXmlToBinary(*xml, destData);
 }
 
 void DistortionAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+	std::unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+
+	if (xmlState.get() != nullptr)
+		if (xmlState->hasTagName(mParameters.state.getType()))
+			mParameters.replaceState(ValueTree::fromXml(*xmlState));
 }
 
 AudioProcessorValueTreeState& DistortionAudioProcessor::getState()
