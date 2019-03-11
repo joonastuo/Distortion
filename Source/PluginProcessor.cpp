@@ -106,8 +106,11 @@ void DistortionAudioProcessor::changeProgramName (int index, const String& newNa
 //==============================================================================
 void DistortionAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
+	dsp::ProcessSpec spec;
+	spec.sampleRate = sampleRate;
+	spec.maximumBlockSize = samplesPerBlock;
+	spec.numChannels = getTotalNumOutputChannels();
+	mDistortion.prepare(spec);
 }
 
 void DistortionAudioProcessor::releaseResources()
@@ -142,24 +145,23 @@ bool DistortionAudioProcessor::isBusesLayoutSupported (const BusesLayout& layout
 
 void DistortionAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
-    ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels  = getTotalNumInputChannels();
-    auto totalNumOutputChannels = getTotalNumOutputChannels();
+	auto totalNumInputChannels = getTotalNumInputChannels();
+	auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-	auto wetDry = *mWetDryPointer;
-    float volume = *mParameters.getRawParameterValue("volume");
+	auto numSamples = buffer.getNumSamples();
 
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
+	for (auto i = jmin(2, totalNumInputChannels); i < totalNumOutputChannels; ++i)
+		buffer.clear(i, 0, numSamples);
 
-		for (auto sample = 0; sample < buffer.getNumSamples(); ++sample)
-		{
-			float dryOutput = buffer.getSample(channel, sample);
-			float wetOutput = mDistortion.applyDistortion(dryOutput);
-			channelData[sample] = (dryOutput * (1 - wetDry) + wetOutput * wetDry) * volume;
-		}
-    }
+	mDistortion.updateParameters();
+
+	dsp::AudioBlock<float> block(buffer);
+
+	if (block.getNumChannels() > 2)
+		block = block.getSubsetChannelBlock(0, 2);
+
+	mDistortion.process(dsp::ProcessContextReplacing<float>(block));
+
 }
 
 //==============================================================================
