@@ -15,7 +15,7 @@
 DistortionAudioProcessorEditor::DistortionAudioProcessorEditor (DistortionAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p), mParameter(p.getState())
 {
-    setSize (350, 180);
+    setSize (350, 150);
 	initialiseGUI();
 }
 
@@ -23,9 +23,9 @@ DistortionAudioProcessorEditor::DistortionAudioProcessorEditor (DistortionAudioP
 DistortionAudioProcessorEditor::~DistortionAudioProcessorEditor()
 {
 	// Set the LOF of all sliders to nullptr
-    mGainSlider.setLookAndFeel(nullptr);
+    mInputVolumeSlider.setLookAndFeel(nullptr);
     mWetDrySlider.setLookAndFeel(nullptr);
-    mVolumeSlider.setLookAndFeel(nullptr);
+    mOutputVolumeSlider.setLookAndFeel(nullptr);
 	mLowPassSlider.setLookAndFeel(nullptr);
 	mHighPassSlider.setLookAndFeel(nullptr);
 }
@@ -53,8 +53,8 @@ void DistortionAudioProcessorEditor::resized()
     volumeBox.justifyContent = FlexBox::JustifyContent::center;
     volumeBox.flexDirection = FlexBox::Direction::column;
     volumeBox.items.addArray({
-							  makeLabel(mVolumeLabel),
-                              makeRotarySlider(mVolumeSlider)
+							  makeLabel(mOutputVolumeLabel),
+                              makeRotarySlider(mOutputVolumeSlider)
 							  });
 
 	// LOW ===================================
@@ -83,8 +83,8 @@ void DistortionAudioProcessorEditor::resized()
 	gainBox.justifyContent = FlexBox::JustifyContent::center;
 	gainBox.flexDirection = FlexBox::Direction::column;
 	gainBox.items.addArray({ 
-							 makeLabel(mGainLabel),
-							 makeRotarySlider(mGainSlider)
+							 makeLabel(mInputVolumeLabel),
+							 makeRotarySlider(mInputVolumeSlider)
 							});
 
 	// WET/DRY ===============================
@@ -115,7 +115,7 @@ void DistortionAudioProcessorEditor::resized()
 //==============================================================================
 FlexItem DistortionAudioProcessorEditor::makeRotarySlider(Component & c)
 {
-	return FlexItem(c).withMinWidth(sliderSize).withMinHeight(sliderSize);
+	return FlexItem(c).withMinWidth(mSliderSize).withMinHeight(mSliderSize);
 }
 
 //==============================================================================
@@ -129,15 +129,15 @@ void DistortionAudioProcessorEditor::initialiseGUI()
 {
 	// INPUT VOLUME ================================
 	// Label
-	mGainLabel.setText("DIST", dontSendNotification);
-	mGainLabel.setJustificationType(Justification::centred);
-	addAndMakeVisible(mGainLabel);
+	mInputVolumeLabel.setText("DIST", dontSendNotification);
+	mInputVolumeLabel.setJustificationType(Justification::centred);
+	addAndMakeVisible(mInputVolumeLabel);
 	// Slider
-	mGainSlider.setSliderStyle(Slider::SliderStyle::Rotary);
-	mGainSlider.setTextBoxStyle(Slider::NoTextBox, true, 100, 20);
-    mGainSlider.setLookAndFeel(&knobLookAndFeel);
-	mGainAttachment.reset(new SliderAttachment(mParameter, "gain", mGainSlider));
-	addAndMakeVisible(mGainSlider);
+	mInputVolumeSlider.setSliderStyle(Slider::SliderStyle::Rotary);
+	mInputVolumeSlider.setTextBoxStyle(Slider::NoTextBox, true, 100, 20);
+    mInputVolumeSlider.setLookAndFeel(&knobLookAndFeel);
+	mInputVolumeAttachment.reset(new SliderAttachment(mParameter, "inputVolume", mInputVolumeSlider));
+	addAndMakeVisible(mInputVolumeSlider);
 
 	// LOWPASS FILTER =================================
 	// Label
@@ -147,6 +147,7 @@ void DistortionAudioProcessorEditor::initialiseGUI()
 	// Slider
 	mLowPassSlider.setSliderStyle(Slider::SliderStyle::Rotary);
 	mLowPassSlider.setTextBoxStyle(Slider::NoTextBox, true, 100.f, 20.f);
+	mLowPassSlider.setTextValueSuffix(" Hz");
 	mLowPassSlider.setLookAndFeel(&knobLookAndFeel);
 	mLowPassAttachment.reset(new SliderAttachment(mParameter, "LPFreq", mLowPassSlider));
 	addAndMakeVisible(mLowPassSlider);
@@ -156,24 +157,26 @@ void DistortionAudioProcessorEditor::initialiseGUI()
 	mHighPassLabel.setText("HIGH", dontSendNotification);
 	mHighPassLabel.setJustificationType(Justification::centred);
 	addAndMakeVisible(mHighPassLabel);
+
 	// Slider
 	mHighPassSlider.setSliderStyle(Slider::SliderStyle::Rotary);
 	mHighPassSlider.setTextBoxStyle(Slider::NoTextBox, true, 100.f, 20.f);
+	mLowPassSlider.setTextValueSuffix(" Hz");
 	mHighPassSlider.setLookAndFeel(&knobLookAndFeel);
 	mHighPassAttachment.reset(new SliderAttachment(mParameter, "HPFreq", mHighPassSlider));
 	addAndMakeVisible(mHighPassSlider);
 	
 	// OUTPUT VOLUME ==================================
 	// Label
-    mVolumeLabel.setText("LEVEL", dontSendNotification);
-    mVolumeLabel.setJustificationType(Justification::centred);
-    addAndMakeVisible(mVolumeLabel);
+    mOutputVolumeLabel.setText("LEVEL", dontSendNotification);
+    mOutputVolumeLabel.setJustificationType(Justification::centred);
+    addAndMakeVisible(mOutputVolumeLabel);
    // Slider 
-    mVolumeSlider.setSliderStyle(Slider::SliderStyle::Rotary);
-    mVolumeSlider.setTextBoxStyle(Slider::NoTextBox, true, 100, 20);
-    mVolumeSlider.setLookAndFeel(&knobLookAndFeel);
-    mVolumeAttachment.reset(new SliderAttachment(mParameter, "volume", mVolumeSlider));
-    addAndMakeVisible(mVolumeSlider);
+    mOutputVolumeSlider.setSliderStyle(Slider::SliderStyle::Rotary);
+    mOutputVolumeSlider.setTextBoxStyle(Slider::NoTextBox, true, 100, 20);
+    mOutputVolumeSlider.setLookAndFeel(&knobLookAndFeel);
+    mOutputVolumeAttachment.reset(new SliderAttachment(mParameter, "outputVolume", mOutputVolumeSlider));
+    addAndMakeVisible(mOutputVolumeSlider);
 
 	// WET/DRY ======================================
 	// Label

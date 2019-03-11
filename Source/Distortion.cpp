@@ -55,6 +55,8 @@ void Distortion::process(dsp::ProcessContextReplacing<float> context)
 
 	mInputVolume.process(context);
 
+	mHighPassFilter.process(context);
+
 	dsp::AudioBlock<float> oversampledBlock  = mOversampling -> processSamplesUp(context.getInputBlock());
 	auto waveshaperContext = dsp::ProcessContextReplacing<float>(oversampledBlock);
 
@@ -64,27 +66,24 @@ void Distortion::process(dsp::ProcessContextReplacing<float> context)
 	// downsample
 	mOversampling->processSamplesDown(context.getOutputBlock());
 
+	mLowPassFilter.process(context);
+
 	mOutputVolume.process(context);
 }
 
 void Distortion::updateParameters()
 {
-	mInputVolume.setGainLinear(*mParameters.getRawParameterValue("gain"));
-	mOutputVolume.setGainLinear(*mParameters.getRawParameterValue("volume"));
-}
+	float inputVolume = *mParameters.getRawParameterValue("inputVolume");
+	float outputVolume = *mParameters.getRawParameterValue("outputVolume");
 
-float Distortion::expDistortion(float sample)
-{
-	auto gain = *mParameters.getRawParameterValue("gain");
+	auto inputdB = Decibels::decibelsToGain(inputVolume);
+	auto outputdB = Decibels::decibelsToGain(outputVolume);
 
-	float wetOutput;
-	if (sample > 0)
-	{
-		wetOutput = 1 - exp(-1 * (sample * gain));
-	}
-	else
-	{
-		wetOutput = -1 + exp(1 * (sample * gain));
-	}
-	return wetOutput;
+	if (mInputVolume.getGainLinear() != inputdB)     mInputVolume.setGainLinear(inputdB);
+	if (mOutputVolume.getGainLinear() != outputdB)   mOutputVolume.setGainLinear(outputdB);
+
+	float freqLowPass = *mParameters.getRawParameterValue("LPFreq");
+	*mLowPassFilter.state = *dsp::IIR::Coefficients<float>::makeFirstOrderLowPass(mSampleRate, freqLowPass);
+	float freqHighPass = *mParameters.getRawParameterValue("HPFreq");
+	*mHighPassFilter.state = *dsp::IIR::Coefficients<float>::makeFirstOrderHighPass(mSampleRate, freqHighPass);
 }

@@ -34,35 +34,34 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     DistortionAudioProcessor& processor;
-
 	AudioProcessorValueTreeState& mParameter;
 
 	typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
 
 	// Sliders
-	Slider mGainSlider;
-	Slider mWetDrySlider;
-    Slider mVolumeSlider;
-	Slider mLowPassSlider;
+	Slider mInputVolumeSlider;
 	Slider mHighPassSlider;
+	Slider mLowPassSlider;
+    Slider mOutputVolumeSlider;
+	Slider mWetDrySlider;
 
 	// Labels
-	Label mGainLabel;
-	Label mWetDryLabel;
-    Label mVolumeLabel;
-	Label mLowPassLabel;
+	Label mInputVolumeLabel;
 	Label mHighPassLabel;
+	Label mLowPassLabel;
+    Label mOutputVolumeLabel;
+	Label mWetDryLabel;
 
-   // LAF 
+    // LAF 
     KnobLookAndFeel knobLookAndFeel;
     
-	int sliderSize = 60;
+	int mSliderSize = 60;
 
-	std::unique_ptr<SliderAttachment> mGainAttachment;
-	std::unique_ptr<SliderAttachment> mWetDryAttachment;
-    std::unique_ptr<SliderAttachment> mVolumeAttachment;
-	std::unique_ptr<SliderAttachment> mLowPassAttachment;
+	std::unique_ptr<SliderAttachment> mInputVolumeAttachment;
 	std::unique_ptr<SliderAttachment> mHighPassAttachment;
+	std::unique_ptr<SliderAttachment> mLowPassAttachment;
+    std::unique_ptr<SliderAttachment> mOutputVolumeAttachment;
+	std::unique_ptr<SliderAttachment> mWetDryAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistortionAudioProcessorEditor)
 };
