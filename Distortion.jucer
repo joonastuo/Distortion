@@ -10,9 +10,16 @@
       <FILE id="A2PtUx" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="hHYVbq" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
-      <FILE id="bDJaUk" name="Distortion.cpp" compile="1" resource="0" file="Source/Distortion.cpp"/>
-      <FILE id="uRba4d" name="Distortion.h" compile="0" resource="0" file="Source/Distortion.h"/>
-      <FILE id="st75R5" name="MyKnobs.h" compile="0" resource="0" file="Source/MyKnobs.h"/>
+      <GROUP id="{9A046439-1E03-3204-1E0A-320FEE09BFFE}" name="AudioDSP">
+        <FILE id="bDJaUk" name="Distortion.cpp" compile="1" resource="0" file="Source/Distortion.cpp"/>
+        <FILE id="uRba4d" name="Distortion.h" compile="0" resource="0" file="Source/Distortion.h"/>
+      </GROUP>
+      <GROUP id="{52DC8226-B5A8-B45E-BA0E-B39248FF4B81}" name="LookAndFeel">
+        <FILE id="st75R5" name="MyKnobs.h" compile="0" resource="0" file="Source/MyKnobs.h"/>
+      </GROUP>
+    </GROUP>
+    <GROUP id="{0DE55145-3957-988E-D563-002BE8190010}" name="Helper">
+      <FILE id="cgpZOP" name="Identifiers.h" compile="0" resource="0" file="Source/Identifiers.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

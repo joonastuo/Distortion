@@ -14,7 +14,7 @@
 //==============================================================================
 Distortion::Distortion(AudioProcessorValueTreeState& vt)
 	: mParameters(vt),
-	mWaveShapers{ { dsp::FastMathApproximations::tanh } },
+	mWaveShapers{ { std::tanh } },
 	mLowPassFilter(dsp::IIR::Coefficients<float>::makeFirstOrderLowPass(44100.f, 20000.f)),
 	mHighPassFilter(dsp::IIR::Coefficients<float>::makeFirstOrderHighPass(44100.f, 20.f))
 {
@@ -73,8 +73,8 @@ void Distortion::process(dsp::ProcessContextReplacing<float> context)
 
 void Distortion::updateParameters()
 {
-	float inputVolume = *mParameters.getRawParameterValue("inputVolume");
-	float outputVolume = *mParameters.getRawParameterValue("outputVolume");
+	float inputVolume = *mParameters.getRawParameterValue(IDs::inputVolume);
+	float outputVolume = *mParameters.getRawParameterValue(IDs::outputVolume);
 
 	auto inputdB = Decibels::decibelsToGain(inputVolume);
 	auto outputdB = Decibels::decibelsToGain(outputVolume);
@@ -82,8 +82,8 @@ void Distortion::updateParameters()
 	if (mInputVolume.getGainLinear() != inputdB)     mInputVolume.setGainLinear(inputdB);
 	if (mOutputVolume.getGainLinear() != outputdB)   mOutputVolume.setGainLinear(outputdB);
 
-	float freqLowPass = *mParameters.getRawParameterValue("LPFreq");
+	float freqLowPass = *mParameters.getRawParameterValue(IDs::LPFreq);
 	*mLowPassFilter.state = *dsp::IIR::Coefficients<float>::makeFirstOrderLowPass(mSampleRate, freqLowPass);
-	float freqHighPass = *mParameters.getRawParameterValue("HPFreq");
+	float freqHighPass = *mParameters.getRawParameterValue(IDs::HPFreq);
 	*mHighPassFilter.state = *dsp::IIR::Coefficients<float>::makeFirstOrderHighPass(mSampleRate, freqHighPass);
 }

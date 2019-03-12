@@ -12,6 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Distortion.h"
+#include "Identifiers.h"
 
 //==============================================================================
 /**
@@ -62,8 +63,6 @@ public:
 private:
 	AudioProcessorValueTreeState mParameters;
 	Distortion mDistortion;
-
-	float* mWetDryPointer = nullptr;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistortionAudioProcessor)

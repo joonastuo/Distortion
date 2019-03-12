@@ -32,15 +32,13 @@ DistortionAudioProcessor::DistortionAudioProcessor()
     NormalisableRange<float> outputVolumeRange(-40.0f, 40.0f, 0.0f, 1.0f );
 	NormalisableRange<float> wetDryRange(0.f, 1.f);
 
-	mParameters.createAndAddParameter("inputVolume", "DIST", "dB", inputVolumeRange, 0.0f, nullptr, nullptr);
-	mParameters.createAndAddParameter("HPFreq", "Pre Highpass Freq", "Hz", highPassRange, 20.f, nullptr, nullptr);
-	mParameters.createAndAddParameter("LPFreq", "Post Lowpass Freq", "Hz", lowPassRange, 20000.f, nullptr, nullptr);
-    mParameters.createAndAddParameter("outputVolume", "LEVEL", "dB", outputVolumeRange, 0.0f, nullptr, nullptr);
-	mParameters.createAndAddParameter("wetDry", "WetDry", String(), wetDryRange, .5f, nullptr, nullptr);
+	mParameters.createAndAddParameter(IDs::inputVolume, "DIST", "dB", inputVolumeRange, 0.0f, nullptr, nullptr);
+	mParameters.createAndAddParameter(IDs::HPFreq, "Pre Highpass Freq", "Hz", highPassRange, 20.f, nullptr, nullptr);
+	mParameters.createAndAddParameter(IDs::LPFreq, "Post Lowpass Freq", "Hz", lowPassRange, 20000.f, nullptr, nullptr);
+    mParameters.createAndAddParameter(IDs::outputVolume, "LEVEL", "dB", outputVolumeRange, 0.0f, nullptr, nullptr);
+	mParameters.createAndAddParameter(IDs::wetDry, "WetDry", String(), wetDryRange, .5f, nullptr, nullptr);
 	
 	mParameters.state = ValueTree("Distortion");
-
-	mWetDryPointer = mParameters.getRawParameterValue("wetDry");
 }
 
 DistortionAudioProcessor::~DistortionAudioProcessor()

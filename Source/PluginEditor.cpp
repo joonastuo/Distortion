@@ -136,7 +136,7 @@ void DistortionAudioProcessorEditor::initialiseGUI()
 	mInputVolumeSlider.setSliderStyle(Slider::SliderStyle::Rotary);
 	mInputVolumeSlider.setTextBoxStyle(Slider::NoTextBox, true, 100, 20);
     mInputVolumeSlider.setLookAndFeel(&knobLookAndFeel);
-	mInputVolumeAttachment.reset(new SliderAttachment(mParameter, "inputVolume", mInputVolumeSlider));
+	mInputVolumeAttachment.reset(new SliderAttachment(mParameter, IDs::inputVolume, mInputVolumeSlider));
 	addAndMakeVisible(mInputVolumeSlider);
 
 	// LOWPASS FILTER =================================
@@ -149,7 +149,7 @@ void DistortionAudioProcessorEditor::initialiseGUI()
 	mLowPassSlider.setTextBoxStyle(Slider::NoTextBox, true, 100.f, 20.f);
 	mLowPassSlider.setTextValueSuffix(" Hz");
 	mLowPassSlider.setLookAndFeel(&knobLookAndFeel);
-	mLowPassAttachment.reset(new SliderAttachment(mParameter, "LPFreq", mLowPassSlider));
+	mLowPassAttachment.reset(new SliderAttachment(mParameter, IDs::LPFreq, mLowPassSlider));
 	addAndMakeVisible(mLowPassSlider);
 
 	// HIGHPASS FILTER =================================
@@ -163,7 +163,7 @@ void DistortionAudioProcessorEditor::initialiseGUI()
 	mHighPassSlider.setTextBoxStyle(Slider::NoTextBox, true, 100.f, 20.f);
 	mLowPassSlider.setTextValueSuffix(" Hz");
 	mHighPassSlider.setLookAndFeel(&knobLookAndFeel);
-	mHighPassAttachment.reset(new SliderAttachment(mParameter, "HPFreq", mHighPassSlider));
+	mHighPassAttachment.reset(new SliderAttachment(mParameter, IDs::HPFreq, mHighPassSlider));
 	addAndMakeVisible(mHighPassSlider);
 	
 	// OUTPUT VOLUME ==================================
@@ -175,18 +175,18 @@ void DistortionAudioProcessorEditor::initialiseGUI()
     mOutputVolumeSlider.setSliderStyle(Slider::SliderStyle::Rotary);
     mOutputVolumeSlider.setTextBoxStyle(Slider::NoTextBox, true, 100, 20);
     mOutputVolumeSlider.setLookAndFeel(&knobLookAndFeel);
-    mOutputVolumeAttachment.reset(new SliderAttachment(mParameter, "outputVolume", mOutputVolumeSlider));
+    mOutputVolumeAttachment.reset(new SliderAttachment(mParameter, IDs::outputVolume, mOutputVolumeSlider));
     addAndMakeVisible(mOutputVolumeSlider);
 
 	// WET/DRY ======================================
 	// Label
-	mWetDryLabel.setText("DRY / WET", dontSendNotification);
+	mWetDryLabel.setText("DRY/WET", dontSendNotification);
 	mWetDryLabel.setJustificationType(Justification::centred);
 	addAndMakeVisible(mWetDryLabel);
 	// Slider
 	mWetDrySlider.setSliderStyle(Slider::SliderStyle::Rotary);
 	mWetDrySlider.setTextBoxStyle(Slider::NoTextBox, true, 100, 20);
     mWetDrySlider.setLookAndFeel(&knobLookAndFeel);
-	mWetDryAttachment.reset(new SliderAttachment(mParameter, "wetDry", mWetDrySlider));
+	mWetDryAttachment.reset(new SliderAttachment(mParameter, IDs::wetDry, mWetDrySlider));
 	addAndMakeVisible(mWetDrySlider);
 }
