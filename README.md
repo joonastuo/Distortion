@@ -1,4 +1,4 @@
 Distortion
 ==========
 
-A distortion plugin made with JUCE (v.5.4.3).
+A distortion plugin made with JUCE (v5.4.3).
