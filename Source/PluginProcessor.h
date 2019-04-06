@@ -11,6 +11,8 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "Distortion.h"
+#include "Identifiers.h"
 
 //==============================================================================
 /**
@@ -57,13 +59,10 @@ public:
 
     //==============================================================================
 	AudioProcessorValueTreeState& getState();
-	float expDistortion(float sample);
 
 private:
 	AudioProcessorValueTreeState mParameters;
-
-	float* mGainPointer = nullptr;
-	float* mWetDryPointer = nullptr;
+	Distortion mDistortion;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistortionAudioProcessor)

@@ -22,17 +22,70 @@ DistortionAudioProcessor::DistortionAudioProcessor()
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
                        ),
-		mParameters(*this, nullptr)
+		mParameters(*this, nullptr, Identifier("Distortion"),
+			{
+			  std::make_unique<AudioParameterFloat>(IDs::inputVolume,
+													"DIST",
+													NormalisableRange<float>(0.f, 60.f),
+													0.f,
+													" dB",
+													AudioProcessorParameter::genericParameter,
+													[](float value, int) {return static_cast<String>(round(value * 100.f) / 100.f); },
+													nullptr
+													),
+			  std::make_unique<AudioParameterFloat>(IDs::outputVolume,
+													"LEVEL",
+													NormalisableRange<float>(-40.f, 40.f),
+													0.f,
+													" dB",
+													AudioProcessorParameter::genericParameter,
+													[](float value, int) {return static_cast<String>(round(value * 100.f) / 100.f); },
+													nullptr
+													),
+			  std::make_unique<AudioParameterFloat>(IDs::HPFreq,
+													"Pre Highpass Freq",
+													NormalisableRange<float>(20.f, 20000.f, 0.01f, 0.2299f),
+													0.f,
+													" Hz",
+													AudioProcessorParameter::genericParameter,
+													[](float value, int) {return static_cast<String>(round(value * 100.f) / 100.f); },
+													nullptr
+													),
+			  std::make_unique<AudioParameterFloat>(IDs::LPFreq,
+													"Post Lowpass Freq",
+													NormalisableRange<float>(20.f, 20000.f, 0.01f, 0.2299f),
+													20000.f,
+													" Hz",
+													AudioProcessorParameter::genericParameter,
+													[](float value, int) {return static_cast<String>(round(value * 100.f) / 100.f); },
+													nullptr
+													),
+			  std::make_unique<AudioParameterFloat>(IDs::wetDry,
+													"Mix",
+													NormalisableRange<float>(0.f, 1.f),
+													0.5,
+													String(),
+													AudioProcessorParameter::genericParameter,
+													[](float value, int) {return static_cast<String>(round(value * 100.f * 100.f) / 100.f); },
+													nullptr
+													) 
+			}),
+		mDistortion(mParameters)
 #endif
 {
-	NormalisableRange<float> gainRange(0.f, 25.f);
-	NormalisableRange<float> wetDryRange(0.f, 1.f);
-	mParameters.createAndAddParameter("gain", "Gain", String(), gainRange, .5f, nullptr, nullptr);
-	mParameters.createAndAddParameter("wetDry", "WetDry", String(), wetDryRange, .5f, nullptr, nullptr);
-	mParameters.state = ValueTree("SimpleDistortion");
+	//NormalisableRange<float> inputVolumeRange(0.0f, 60.0f, 0.0f, 1.0f);
+	//NormalisableRange<float> highPassRange(20.f, 20000.f, 0.f, 0.5f);
+	//NormalisableRange<float> lowPassRange(20.f, 20000.f, 0.f, 0.5f);
+ //   NormalisableRange<float> outputVolumeRange(-40.0f, 40.0f, 0.0f, 1.0f );
+	//NormalisableRange<float> wetDryRange(0.f, 1.f);
 
-	mGainPointer = mParameters.getRawParameterValue("gain");
-	mWetDryPointer = mParameters.getRawParameterValue("wetDry");
+	//mParameters.createAndAddParameter(IDs::inputVolume, "DIST", "dB", inputVolumeRange, 0.0f, nullptr, nullptr);
+	//mParameters.createAndAddParameter(IDs::HPFreq, "Pre Highpass Freq", "Hz", highPassRange, 20.f, nullptr, nullptr);
+	//mParameters.createAndAddParameter(IDs::LPFreq, "Post Lowpass Freq", "Hz", lowPassRange, 20000.f, nullptr, nullptr);
+ //   mParameters.createAndAddParameter(IDs::outputVolume, "LEVEL", "dB", outputVolumeRange, 0.0f, nullptr, nullptr);
+	//mParameters.createAndAddParameter(IDs::wetDry, "WetDry", String(), wetDryRange, .5f, nullptr, nullptr);
+	//
+	//mParameters.state = ValueTree("Distortion");
 }
 
 DistortionAudioProcessor::~DistortionAudioProcessor()
@@ -104,8 +157,11 @@ void DistortionAudioProcessor::changeProgramName (int index, const String& newNa
 //==============================================================================
 void DistortionAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
+	dsp::ProcessSpec spec;
+	spec.sampleRate = sampleRate;
+	spec.maximumBlockSize = samplesPerBlock;
+	spec.numChannels = getTotalNumOutputChannels();
+	mDistortion.prepare(spec);
 }
 
 void DistortionAudioProcessor::releaseResources()
@@ -140,40 +196,23 @@ bool DistortionAudioProcessor::isBusesLayoutSupported (const BusesLayout& layout
 
 void DistortionAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
-    ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels  = getTotalNumInputChannels();
-    auto totalNumOutputChannels = getTotalNumOutputChannels();
+	auto totalNumInputChannels = getTotalNumInputChannels();
+	auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-	auto wetDry = *mWetDryPointer;
+	auto numSamples = buffer.getNumSamples();
 
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
+	for (auto i = jmin(2, totalNumInputChannels); i < totalNumOutputChannels; ++i)
+		buffer.clear(i, 0, numSamples);
 
-		for (auto sample = 0; sample < buffer.getNumSamples(); ++sample)
-		{
-			float dryOutput = buffer.getSample(channel, sample);
-			float wetOutput = expDistortion(dryOutput);
-			channelData[sample] = dryOutput * (1 - wetDry) + wetOutput * wetDry;
-		}
-    }
-}
+	mDistortion.updateParameters();
 
-//==============================================================================
-float DistortionAudioProcessor::expDistortion(float sample)
-{
-	auto gain = *mGainPointer;
+	dsp::AudioBlock<float> block(buffer);
 
-	float wetOutput;
-	if (sample > 0)
-	{
-		wetOutput = 1 - exp(-1 * (sample * gain));
-	}
-	else
-	{
-		wetOutput = -1 + exp(1 * (sample * gain));
-	}
-	return wetOutput;
+	if (block.getNumChannels() > 2)
+		block = block.getSubsetChannelBlock(0, 2);
+
+	mDistortion.process(dsp::ProcessContextReplacing<float>(block));
+
 }
 
 //==============================================================================
@@ -190,15 +229,18 @@ AudioProcessorEditor* DistortionAudioProcessor::createEditor()
 //==============================================================================
 void DistortionAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+	auto state = mParameters.copyState();
+	std::unique_ptr<XmlElement> xml(state.createXml());
+	copyXmlToBinary(*xml, destData);
 }
 
 void DistortionAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+	std::unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+
+	if (xmlState.get() != nullptr)
+		if (xmlState->hasTagName(mParameters.state.getType()))
+			mParameters.replaceState(ValueTree::fromXml(*xmlState));
 }
 
 AudioProcessorValueTreeState& DistortionAudioProcessor::getState()
