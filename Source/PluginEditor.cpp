@@ -115,13 +115,13 @@ void DistortionAudioProcessorEditor::resized()
 //==============================================================================
 FlexItem DistortionAudioProcessorEditor::makeRotarySlider(Component & c)
 {
-	return FlexItem(c).withMinWidth(mSliderSize).withMinHeight(mSliderSize);
+	return FlexItem(c).withMinWidth(static_cast<float>(mSliderSize)).withMinHeight(static_cast<float>(mSliderSize));
 }
 
 //==============================================================================
 FlexItem DistortionAudioProcessorEditor::makeLabel(Component & c)
 {
-	return FlexItem(c).withMinWidth(c.getWidth()).withMinHeight(20);
+	return FlexItem(c).withMinWidth(static_cast<float>(c.getWidth())).withMinHeight(20);
 }
 
 //==============================================================================
@@ -146,10 +146,11 @@ void DistortionAudioProcessorEditor::initialiseGUI()
 	addAndMakeVisible(mLowPassLabel);
 	// Slider
 	mLowPassSlider.setSliderStyle(Slider::SliderStyle::Rotary);
-	mLowPassSlider.setTextBoxStyle(Slider::NoTextBox, true, 100.f, 20.f);
+	mLowPassSlider.setTextBoxStyle(Slider::NoTextBox, true, 100, 20);
 	mLowPassSlider.setTextValueSuffix(" Hz");
 	mLowPassSlider.setLookAndFeel(&knobLookAndFeel);
 	mLowPassAttachment.reset(new SliderAttachment(mParameter, IDs::LPFreq, mLowPassSlider));
+	mLowPassSlider.setSkewFactorFromMidPoint(1000.0);
 	addAndMakeVisible(mLowPassSlider);
 
 	// HIGHPASS FILTER =================================
@@ -160,10 +161,11 @@ void DistortionAudioProcessorEditor::initialiseGUI()
 
 	// Slider
 	mHighPassSlider.setSliderStyle(Slider::SliderStyle::Rotary);
-	mHighPassSlider.setTextBoxStyle(Slider::NoTextBox, true, 100.f, 20.f);
+	mHighPassSlider.setTextBoxStyle(Slider::NoTextBox, true, 100, 20);
 	mLowPassSlider.setTextValueSuffix(" Hz");
 	mHighPassSlider.setLookAndFeel(&knobLookAndFeel);
 	mHighPassAttachment.reset(new SliderAttachment(mParameter, IDs::HPFreq, mHighPassSlider));
+	mHighPassSlider.setSkewFactorFromMidPoint(1000.0);
 	addAndMakeVisible(mHighPassSlider);
 	
 	// OUTPUT VOLUME ==================================

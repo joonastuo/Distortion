@@ -27,9 +27,6 @@ public:
 		auto radius = jmin(width / 2, height / 2) - 10.0f;
 		auto centreX = x + width * 0.5f;
 		auto centreY = y + height * 0.5f;
-		auto rx = centreX - radius;
-		auto ry = centreY - radius;
-		auto rw = radius * 2.0f;
 		auto angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
 
 		// SLIDER BACKGROUND =============================================
@@ -76,6 +73,6 @@ public:
 			value = static_cast<String> (round(slider.getValue() * 100.f) / 100.f);
 
 		// Draw text
-		g.drawFittedText(value + slider.getTextValueSuffix(), centreX - 30.f, height - 10.f, 60.f, 10.f, Justification::centred, 1);
+		g.drawFittedText(value + slider.getTextValueSuffix(), static_cast<int>(centreX - 30), static_cast<int>(height - 10), 60, 10, Justification::centred, 1);
 	}
 };
