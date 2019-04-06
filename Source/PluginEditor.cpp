@@ -134,8 +134,9 @@ void DistortionAudioProcessorEditor::initialiseGUI()
 	addAndMakeVisible(mInputVolumeLabel);
 	// Slider
 	mInputVolumeSlider.setSliderStyle(Slider::SliderStyle::Rotary);
-	mInputVolumeSlider.setTextBoxStyle(Slider::NoTextBox, true, 100, 20);
+	mInputVolumeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, mTextBoxWidth, mTextBoxHeight);
     mInputVolumeSlider.setLookAndFeel(&knobLookAndFeel);
+	mInputVolumeSlider.setTextValueSuffix(" dB");
 	mInputVolumeAttachment.reset(new SliderAttachment(mParameter, IDs::inputVolume, mInputVolumeSlider));
 	addAndMakeVisible(mInputVolumeSlider);
 
@@ -146,11 +147,10 @@ void DistortionAudioProcessorEditor::initialiseGUI()
 	addAndMakeVisible(mLowPassLabel);
 	// Slider
 	mLowPassSlider.setSliderStyle(Slider::SliderStyle::Rotary);
-	mLowPassSlider.setTextBoxStyle(Slider::NoTextBox, true, 100, 20);
+	mLowPassSlider.setTextBoxStyle(Slider::TextBoxBelow, false, mTextBoxWidth, mTextBoxHeight);
 	mLowPassSlider.setTextValueSuffix(" Hz");
 	mLowPassSlider.setLookAndFeel(&knobLookAndFeel);
 	mLowPassAttachment.reset(new SliderAttachment(mParameter, IDs::LPFreq, mLowPassSlider));
-	mLowPassSlider.setSkewFactorFromMidPoint(1000.0);
 	addAndMakeVisible(mLowPassSlider);
 
 	// HIGHPASS FILTER =================================
@@ -161,11 +161,10 @@ void DistortionAudioProcessorEditor::initialiseGUI()
 
 	// Slider
 	mHighPassSlider.setSliderStyle(Slider::SliderStyle::Rotary);
-	mHighPassSlider.setTextBoxStyle(Slider::NoTextBox, true, 100, 20);
-	mLowPassSlider.setTextValueSuffix(" Hz");
+	mHighPassSlider.setTextBoxStyle(Slider::TextBoxBelow, false, mTextBoxWidth, mTextBoxHeight);
+	mHighPassSlider.setTextValueSuffix(" Hz");
 	mHighPassSlider.setLookAndFeel(&knobLookAndFeel);
 	mHighPassAttachment.reset(new SliderAttachment(mParameter, IDs::HPFreq, mHighPassSlider));
-	mHighPassSlider.setSkewFactorFromMidPoint(1000.0);
 	addAndMakeVisible(mHighPassSlider);
 	
 	// OUTPUT VOLUME ==================================
@@ -175,8 +174,9 @@ void DistortionAudioProcessorEditor::initialiseGUI()
     addAndMakeVisible(mOutputVolumeLabel);
    // Slider 
     mOutputVolumeSlider.setSliderStyle(Slider::SliderStyle::Rotary);
-    mOutputVolumeSlider.setTextBoxStyle(Slider::NoTextBox, true, 100, 20);
+    mOutputVolumeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, mTextBoxWidth, mTextBoxHeight);
     mOutputVolumeSlider.setLookAndFeel(&knobLookAndFeel);
+	mOutputVolumeSlider.setTextValueSuffix(" dB");
     mOutputVolumeAttachment.reset(new SliderAttachment(mParameter, IDs::outputVolume, mOutputVolumeSlider));
     addAndMakeVisible(mOutputVolumeSlider);
 
@@ -187,8 +187,9 @@ void DistortionAudioProcessorEditor::initialiseGUI()
 	addAndMakeVisible(mWetDryLabel);
 	// Slider
 	mWetDrySlider.setSliderStyle(Slider::SliderStyle::Rotary);
-	mWetDrySlider.setTextBoxStyle(Slider::NoTextBox, true, 100, 20);
+	mWetDrySlider.setTextBoxStyle(Slider::TextBoxBelow, false, mTextBoxWidth, mTextBoxHeight);
     mWetDrySlider.setLookAndFeel(&knobLookAndFeel);
+	mWetDrySlider.setTextValueSuffix("%");
 	mWetDryAttachment.reset(new SliderAttachment(mParameter, IDs::wetDry, mWetDrySlider));
 	addAndMakeVisible(mWetDrySlider);
 }

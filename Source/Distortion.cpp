@@ -29,7 +29,7 @@ Distortion::~Distortion()
 void Distortion::prepare(dsp::ProcessSpec spec)
 {
 	// Initialize class variables
-	mSampleRate = spec.sampleRate;
+	mSampleRate = static_cast<float>(spec.sampleRate);
 	mMaxBlockSize = spec.maximumBlockSize;
 	mNumChannels = spec.numChannels;
 	// Prepare

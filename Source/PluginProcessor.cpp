@@ -30,35 +30,35 @@ DistortionAudioProcessor::DistortionAudioProcessor()
 													0.f,
 													" dB",
 													AudioProcessorParameter::genericParameter,
-													[](float value, int) {return static_cast<String>(round(value * 100.f * 100.f) / 100.f); },
-													[](const String& text) {return round(text.getFloatValue() / 100.f * 100.f) / 100.f; }
+													[](float value, int) {return static_cast<String>(round(value * 100.f) / 100.f); },
+													nullptr
 													),
 			  std::make_unique<AudioParameterFloat>(IDs::outputVolume,
 													"LEVEL",
-													NormalisableRange<float>(0.f, 60.f),
+													NormalisableRange<float>(-40.f, 40.f),
 													0.f,
 													" dB",
 													AudioProcessorParameter::genericParameter,
-													[](float value, int) {return static_cast<String>(round(value * 100.f * 100.f) / 100.f); },
-													[](const String& text) {return round(text.getFloatValue() / 100.f * 100.f) / 100.f; }
+													[](float value, int) {return static_cast<String>(round(value * 100.f) / 100.f); },
+													nullptr
 													),
 			  std::make_unique<AudioParameterFloat>(IDs::HPFreq,
 													"Pre Highpass Freq",
-													NormalisableRange<float>(20.f, 20000.f),
+													NormalisableRange<float>(20.f, 20000.f, 0.01f, 0.2299f),
 													0.f,
 													" Hz",
 													AudioProcessorParameter::genericParameter,
-													[](float value, int) {return static_cast<String>(round(value * 100.f * 100.f) / 100.f); },
-													[](const String& text) {return round(text.getFloatValue() / 100.f * 100.f) / 100.f; }
+													[](float value, int) {return static_cast<String>(round(value * 100.f) / 100.f); },
+													nullptr
 													),
 			  std::make_unique<AudioParameterFloat>(IDs::LPFreq,
 													"Post Lowpass Freq",
-													NormalisableRange<float>(20.f, 20000.f),
+													NormalisableRange<float>(20.f, 20000.f, 0.01f, 0.2299f),
 													20000.f,
 													" Hz",
 													AudioProcessorParameter::genericParameter,
-													[](float value, int) {return static_cast<String>(round(value * 100.f * 100.f) / 100.f); },
-													[](const String& text) {return round(text.getFloatValue() / 100.f * 100.f) / 100.f; }
+													[](float value, int) {return static_cast<String>(round(value * 100.f) / 100.f); },
+													nullptr
 													),
 			  std::make_unique<AudioParameterFloat>(IDs::wetDry,
 													"Mix",
@@ -67,7 +67,7 @@ DistortionAudioProcessor::DistortionAudioProcessor()
 													String(),
 													AudioProcessorParameter::genericParameter,
 													[](float value, int) {return static_cast<String>(round(value * 100.f * 100.f) / 100.f); },
-													[](const String& text) {return round(text.getFloatValue() / 100.f * 100.f) / 100.f; }
+													nullptr
 													) 
 			}),
 		mDistortion(mParameters)

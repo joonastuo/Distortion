@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="uELCMj" name="Distortion" projectType="audioplug" jucerVersion="5.4.3">
+<JUCERPROJECT id="uELCMj" name="Distortion" projectType="audioplug" jucerVersion="5.4.3"
+              pluginFormats="buildAU,buildStandalone,buildVST,buildVST3">
   <MAINGROUP id="xRmc4U" name="Distortion">
     <GROUP id="{99C726F3-CF36-3F52-0F88-E92B5AB1A179}" name="Source">
       <FILE id="bIt8P4" name="PluginProcessor.cpp" compile="1" resource="0"

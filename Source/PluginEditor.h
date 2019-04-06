@@ -56,7 +56,9 @@ private:
     // LAF 
     KnobLookAndFeel knobLookAndFeel;
     
-	int mSliderSize = 60;
+	int mSliderSize = 70;
+	int mTextBoxHeight = 14;
+	int mTextBoxWidth = 120;
 
 	std::unique_ptr<SliderAttachment> mInputVolumeAttachment;
 	std::unique_ptr<SliderAttachment> mHighPassAttachment;
